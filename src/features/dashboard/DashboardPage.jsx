@@ -20,12 +20,11 @@ import {
   MapPin,
   Footprints,
   Clock3,
-  ClipboardList,
   ChevronRight,
   XCircle,
+  ArrowRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { PageHeader } from '@/components/common/PageHeader'
 import { StatCard, Section } from '@/components/common/Cards'
 import { LoadingState, ErrorState, EmptyState } from '@/components/common/States'
 import { AccountStatusBadge } from '@/components/common/StatusBadge'
@@ -33,7 +32,8 @@ import { useQuery } from '@/hooks/useQuery'
 import { useAuth } from '@/features/auth/AuthContext'
 import { getDashboard } from '@/services/dashboardService'
 import { peso, number, formatDate, timeAgo } from '@/lib/format'
-import { PERMISSIONS } from '@/lib/permissions'
+import { PERMISSIONS, ROLE_LABELS } from '@/lib/permissions'
+import { quickActionsFor } from '@/components/layout/navigation'
 import { ACCOUNT_STATUS } from '@/lib/rpt'
 
 const compactPeso = (v) => (v >= 1_000_000 ? `₱${(v / 1_000_000).toFixed(1)}M` : v >= 1000 ? `₱${Math.round(v / 1000)}k` : `₱${v}`)
@@ -48,11 +48,9 @@ export function DashboardPage() {
   const { data, loading, error, reload } = useQuery(() => getDashboard(), [])
 
   return (
-    <>
-      <PageHeader
-        title={`${greeting()}, ${user.fullName.split(' ')[0]}`}
-        description={`Today is ${format(new Date(), 'EEEE, d MMMM yyyy')}.`}
-      />
+    <div className="space-y-8">
+      <WelcomeHero user={user} />
+      <QuickActions user={user} />
       {loading && !data ? (
         <LoadingState rows={5} />
       ) : error ? (
@@ -62,7 +60,63 @@ export function DashboardPage() {
       ) : (
         <OfficeDashboard data={data} />
       )}
-    </>
+    </div>
+  )
+}
+
+function WelcomeHero({ user }) {
+  return (
+    <section className="relative overflow-hidden rounded-2xl bg-sidebar px-5 py-6 text-sidebar-foreground shadow-sm sm:px-8 sm:py-8">
+      {/* Decorative shapes */}
+      <span className="pointer-events-none absolute -top-16 -right-10 size-56 rounded-full bg-white/5" aria-hidden />
+      <span className="pointer-events-none absolute -right-4 -bottom-24 size-48 rounded-full bg-maroon/40" aria-hidden />
+      <span className="absolute inset-x-0 bottom-0 h-1.5 bg-maroon" aria-hidden />
+
+      <div className="relative">
+        <p className="text-sm font-medium text-sidebar-foreground/75">{format(new Date(), 'EEEE, d MMMM yyyy')}</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+          {greeting()}, {user.fullName.split(' ')[0]}!
+        </h1>
+        <p className="mt-2 max-w-xl text-sidebar-foreground/85">What would you like to do today? Pick a task below to get started.</p>
+        <span className="mt-4 inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium">{ROLE_LABELS[user.role]}</span>
+      </div>
+    </section>
+  )
+}
+
+const ACTION_TONES = ['bg-primary/10 text-primary', 'bg-maroon-soft text-maroon', 'bg-success-soft text-success', 'bg-info-soft text-info']
+
+function QuickActions({ user }) {
+  const actions = quickActionsFor(user)
+  if (actions.length === 0) return null
+  return (
+    <section aria-labelledby="quick-actions-title">
+      <h2 id="quick-actions-title" className="mb-3 text-lg font-semibold">
+        Quick tasks
+      </h2>
+      <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {actions.map((a, i) => (
+          <li key={a.to}>
+            <Link
+              to={a.to}
+              className="group flex h-full items-center gap-4 rounded-xl border bg-card p-4 shadow-xs transition hover:-translate-y-0.5 hover:border-maroon/40 hover:shadow-md sm:flex-col sm:items-start sm:p-5"
+            >
+              <span className={`flex size-12 shrink-0 items-center justify-center rounded-xl ${ACTION_TONES[i % ACTION_TONES.length]}`}>
+                <a.icon className="size-6" aria-hidden />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-semibold">{a.label}</span>
+                <span className="block text-sm text-muted-foreground">{a.hint}</span>
+              </span>
+              <span className="flex items-center gap-1 text-sm font-medium text-primary sm:mt-auto">
+                <span className="hidden sm:inline">Open</span>
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }
 
@@ -96,6 +150,7 @@ function OfficeDashboard({ data }) {
 
   return (
     <div className="space-y-6">
+      <h2 className="-mb-3 text-lg font-semibold">At a glance</h2>
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard icon={Banknote} tone="success" label={`Collected in ${data.currentYear}`} value={peso(data.collectedThisYear)} hint="All payments recorded this year" />
         <StatCard
@@ -215,11 +270,6 @@ function OfficeDashboard({ data }) {
 function CollectorDashboard({ data }) {
   return (
     <div className="space-y-6">
-      <Button asChild size="lg" className="h-14 w-full text-lg sm:w-auto">
-        <Link to="/field">
-          <ClipboardList className="size-6" /> Open My Assignments
-        </Link>
-      </Button>
 
       {data.rejectedCount > 0 && (
         <Link to="/field/history" className="flex items-center gap-3 rounded-xl border border-danger/30 bg-danger-soft p-4 text-danger">
@@ -229,6 +279,7 @@ function CollectorDashboard({ data }) {
         </Link>
       )}
 
+      <h2 className="-mb-3 text-lg font-semibold">My work at a glance</h2>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard icon={CalendarClock} tone="danger" label="Follow-ups due" value={number(data.followUpsDue)} hint="Today or earlier" to="/field" />
         <StatCard icon={MapPin} tone="warning" label="Not yet visited" value={number(data.notVisited)} hint="With unpaid balance" to="/field" />

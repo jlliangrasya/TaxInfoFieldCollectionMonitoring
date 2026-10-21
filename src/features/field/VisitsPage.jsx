@@ -24,7 +24,7 @@ export function VisitsPage() {
       <PageHeader
         title="Field Visits"
         description="Activity of all Revenue Collectors: visits, results, collections and follow-ups."
-        breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'Field Visits' }]}
+        breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Field Visits' }]}
       />
       <FilterBar
         showClear={Object.values(filters).some(Boolean)}

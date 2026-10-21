@@ -18,7 +18,7 @@ export function DemoSettingsPage() {
       <PageHeader
         title="Demo Settings"
         description="This is a demonstration version. All records are fictional sample data stored only in this web browser."
-        breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'Demo Settings' }]}
+        breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Demo Settings' }]}
       />
       <div className="grid max-w-4xl gap-6">
         <Section title="Demo data">

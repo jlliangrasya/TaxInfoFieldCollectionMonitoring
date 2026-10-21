@@ -22,7 +22,7 @@ export function AuditLogPage() {
       <PageHeader
         title="Activity Log"
         description="A permanent record of important actions: logins, changes to records, payments, field collections, verifications and report downloads. Entries cannot be edited or deleted."
-        breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'Activity Log' }]}
+        breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Activity Log' }]}
       />
       <FilterBar showClear={Boolean(query || action || from || to)} onClear={() => { setQuery(''); setAction(''); setFrom(''); setTo('') }}>
         <SearchBox value={query} onChange={setQuery} placeholder="User, action or details" />

@@ -49,7 +49,7 @@ export function ChangePasswordPage() {
             ? 'Your password was set by the System Administrator. Please choose your own password to continue.'
             : 'Choose a password that only you know. Do not share it with anyone.'
         }
-        breadcrumbs={forced ? [] : [{ label: 'Dashboard', to: '/' }, { label: 'Change Password' }]}
+        breadcrumbs={forced ? [] : [{ label: 'Home', to: '/' }, { label: 'Change Password' }]}
       />
       <Section className="max-w-xl">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>

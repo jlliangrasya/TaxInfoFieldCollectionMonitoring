@@ -28,6 +28,7 @@ export function PageHeader({ title, description, breadcrumbs = [], actions }) {
           </nav>
         )}
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h1>
+        <span className="mt-2 block h-1 w-12 rounded-full bg-maroon" aria-hidden />
         {description && <p className="mt-1 max-w-3xl text-muted-foreground">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2 no-print">{actions}</div>}

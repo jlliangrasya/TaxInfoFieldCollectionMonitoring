@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router'
-import { Eye, EyeOff, Landmark, Loader2, LogIn, ShieldCheck, TriangleAlert } from 'lucide-react'
+import { Eye, EyeOff, Landmark, Loader2, LogIn, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Field } from '@/components/common/FormField'
 import { useAuth } from './AuthContext'
 import { DEMO_ACCOUNTS, DEMO_PASSWORD } from '@/data/seed'
@@ -40,6 +41,8 @@ export function LoginPage() {
     }
   }
 
+  const selectedDemo = DEMO_ACCOUNTS.find((acc) => acc.username === username)
+
   function fillDemoAccount(acc) {
     setUsername(acc.username)
     setPassword(DEMO_PASSWORD)
@@ -49,7 +52,7 @@ export function LoginPage() {
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
       {/* Welcome panel */}
-      <div className="hidden flex-col justify-between bg-sidebar p-10 text-sidebar-foreground lg:flex">
+      <div className="hidden flex-col justify-between border-r-4 border-r-maroon bg-sidebar p-10 text-sidebar-foreground lg:flex">
         <div className="flex items-center gap-3">
           <span className="flex size-12 items-center justify-center rounded-xl bg-white/10">
             <Landmark className="size-6" aria-hidden />
@@ -73,10 +76,6 @@ export function LoginPage() {
 
       {/* Login form */}
       <div className="flex flex-col">
-        <div role="note" className="border-b border-warning/30 bg-warning-soft px-4 py-2 text-center text-sm">
-          <TriangleAlert className="mr-1 inline size-4 align-[-3px]" aria-hidden />
-          <strong>DEMO MODE</strong> — sample data only. Not an official record.
-        </div>
         <div className="flex flex-1 items-center justify-center px-4 py-10">
           <div className="w-full max-w-md space-y-6">
             <div className="space-y-2 text-center lg:text-left">
@@ -135,28 +134,28 @@ export function LoginPage() {
               </p>
             </form>
 
-            <div className="rounded-xl border bg-card p-4">
-              <p className="font-semibold">Demo accounts</p>
+            <div className="rounded-xl border border-t-4 border-t-maroon bg-card p-4">
+              <p className="font-semibold text-maroon">Demo accounts</p>
               <p className="mb-3 text-sm text-muted-foreground">
-                Tap an account to fill in the login form. Password for all: <code className="rounded bg-muted px-1.5 py-0.5 font-mono">{DEMO_PASSWORD}</code>
+                Pick an account to fill in the login form. Password for all: <code className="rounded bg-muted px-1.5 py-0.5 font-mono">{DEMO_PASSWORD}</code>
               </p>
-              <ul className="divide-y">
-                {DEMO_ACCOUNTS.map((acc) => (
-                  <li key={acc.username}>
-                    <button
-                      type="button"
-                      onClick={() => fillDemoAccount(acc)}
-                      className="flex min-h-11 w-full items-center justify-between gap-3 rounded px-2 py-2 text-left hover:bg-accent"
+              <Select value={selectedDemo?.username ?? ''} onValueChange={(value) => fillDemoAccount(DEMO_ACCOUNTS.find((acc) => acc.username === value))}>
+                <SelectTrigger className="w-full border-primary/60 focus-visible:border-maroon focus-visible:ring-maroon/30 [&_svg]:text-primary" aria-label="Demo account">
+                  <SelectValue placeholder="Choose a demo account" />
+                </SelectTrigger>
+                <SelectContent position="popper" className="border-primary/40">
+                  {DEMO_ACCOUNTS.map((acc) => (
+                    <SelectItem
+                      key={acc.username}
+                      value={acc.username}
+                      className="min-h-11 focus:bg-maroon-soft focus:text-maroon data-[state=checked]:text-maroon [&_svg]:text-maroon"
                     >
-                      <span className="min-w-0">
-                        <span className="block truncate text-sm font-medium">{acc.fullName}</span>
-                        <span className="block text-xs text-muted-foreground">{ROLE_LABELS[acc.role]}</span>
-                      </span>
-                      <code className="shrink-0 font-mono text-xs text-muted-foreground">{acc.username}</code>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                      <span className="truncate font-medium">{acc.fullName}</span>
+                      <span className="text-muted-foreground">· {ROLE_LABELS[acc.role]}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>

@@ -25,7 +25,7 @@ export function TaxpayerDetailPage() {
   const { can } = useAuth()
   const [editOpen, setEditOpen] = useState(false)
   const { data: t, loading, error, reload } = useQuery(() => getTaxpayer(id), [id])
-  const crumbs = [{ label: 'Dashboard', to: '/' }, { label: 'Taxpayers', to: '/taxpayers' }]
+  const crumbs = [{ label: 'Home', to: '/' }, { label: 'Taxpayers', to: '/taxpayers' }]
 
   if (loading && !t) return <LoadingState rows={5} />
   if (error) {

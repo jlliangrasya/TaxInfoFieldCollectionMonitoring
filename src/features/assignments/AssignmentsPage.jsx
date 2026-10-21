@@ -40,7 +40,7 @@ export function AssignmentsPage() {
       <PageHeader
         title="Collector Assignments"
         description="Assign barangays or individual properties to Revenue Collectors. Collectors can only see records in their assigned area."
-        breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'Collector Assignments' }]}
+        breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Collector Assignments' }]}
         actions={
           <Button onClick={() => setCreateOpen(true)}>
             <Plus /> New assignment

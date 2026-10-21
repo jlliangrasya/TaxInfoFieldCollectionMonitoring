@@ -32,7 +32,7 @@ export function TaxpayerListPage() {
       <PageHeader
         title="Taxpayers"
         description="Find a taxpayer by name, Taxpayer ID, or by any of their property numbers (ARP, PIN, TD)."
-        breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'Taxpayers' }]}
+        breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Taxpayers' }]}
       />
       <FilterBar showClear={Boolean(query || barangayId)} onClear={() => { setQuery(''); setBarangayId('') }}>
         <SearchBox value={query} onChange={setQuery} placeholder="Name, Taxpayer ID or ARP No." className="sm:col-span-2" />

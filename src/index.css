@@ -2,7 +2,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Formal, high-contrast palette: deep government blue with clear status colours. */
+/* Formal, high-contrast palette: deep government blue as the main colour, maroon as the accent, clear status colours. */
 :root {
   --radius: 0.6rem;
   --background: oklch(0.985 0.003 247);
@@ -35,14 +35,20 @@
   --info-soft: oklch(0.95 0.03 250);
 
   --chart-1: oklch(0.45 0.13 258);
-  --chart-2: oklch(0.6 0.13 165);
-  --chart-3: oklch(0.7 0.14 75);
-  --chart-4: oklch(0.58 0.18 25);
-  --chart-5: oklch(0.55 0.1 300);
+  --chart-2: oklch(0.45 0.14 18);
+  --chart-3: oklch(0.7 0.1 245);
+  --chart-4: oklch(0.68 0.1 15);
+  --chart-5: oklch(0.55 0.04 260);
 
   --sidebar: oklch(0.27 0.07 260);
   --sidebar-foreground: oklch(0.95 0.01 255);
   --sidebar-accent: oklch(0.35 0.09 260);
+  --sidebar-indicator: oklch(0.7 0.13 15);
+
+  /* Maroon accent, paired with the primary blue */
+  --maroon: oklch(0.38 0.13 18);
+  --maroon-foreground: oklch(0.99 0 0);
+  --maroon-soft: oklch(0.95 0.025 15);
 }
 
 @theme inline {
@@ -85,6 +91,19 @@
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-indicator: var(--sidebar-indicator);
+  --color-maroon: var(--maroon);
+  --color-maroon-foreground: var(--maroon-foreground);
+  --color-maroon-soft: var(--maroon-soft);
+}
+
+/* Keeps an area scrollable while hiding its scrollbar (used by the sidebar). */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer base {

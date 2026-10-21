@@ -119,7 +119,7 @@ export function HelpPage() {
 
   return (
     <>
-      <PageHeader title="Help & Guides" description={`Step-by-step guides for ${ROLE_LABELS[user.role]}s, and the meaning of terms used in the system.`} breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'Help & Guides' }]} />
+      <PageHeader title="Help & Guides" description={`Step-by-step guides for ${ROLE_LABELS[user.role]}s, and the meaning of terms used in the system.`} breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Help & Guides' }]} />
       <div className="grid gap-6 xl:grid-cols-2">
         <Section title="How do I…?">
           <div className="space-y-2">

@@ -74,7 +74,7 @@ export function UsersPage() {
       <PageHeader
         title="User Accounts"
         description="Create accounts, set roles, reset passwords, and activate or deactivate users. All changes are recorded in the Activity Log."
-        breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'User Accounts' }]}
+        breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'User Accounts' }]}
         actions={<Button onClick={() => setDialog({ type: 'create' })}><UserPlus /> Add user</Button>}
       />
       {loading && !data ? (

@@ -53,7 +53,7 @@ export function PropertyDetailPage() {
   const [editOpen, setEditOpen] = useState(false)
   const { data: p, loading, error, reload } = useQuery(() => getProperty(id), [id])
 
-  const crumbs = [{ label: 'Dashboard', to: '/' }, { label: 'Properties', to: '/properties' }]
+  const crumbs = [{ label: 'Home', to: '/' }, { label: 'Properties', to: '/properties' }]
 
   if (loading && !p) return <LoadingState rows={6} />
   if (error) {

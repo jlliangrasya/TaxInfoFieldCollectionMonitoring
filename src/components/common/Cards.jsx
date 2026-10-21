@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 
 const TONES = {
   default: 'bg-primary/10 text-primary',
+  maroon: 'bg-maroon-soft text-maroon',
   success: 'bg-success-soft text-success',
   warning: 'bg-warning-soft text-warning',
   danger: 'bg-danger-soft text-danger',

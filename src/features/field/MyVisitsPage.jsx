@@ -18,7 +18,7 @@ export function MyVisitsPage() {
       <PageHeader
         title="My Visits"
         description="Your field visit history and the status of the collections you recorded."
-        breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'My Visits' }]}
+        breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'My Visits' }]}
       />
       <Tabs value={tab} onValueChange={setTab} className="mb-4">
         <TabsList className="h-auto">

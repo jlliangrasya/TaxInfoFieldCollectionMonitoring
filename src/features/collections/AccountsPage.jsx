@@ -57,7 +57,7 @@ export function AccountsPage() {
       <PageHeader
         title="Collection Monitoring"
         description="Paid, partially paid, unpaid and outstanding accounts, based on payments recorded by the Treasury. Field records count only after verification."
-        breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'Collection Monitoring' }]}
+        breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Collection Monitoring' }]}
       />
 
       <div role="group" aria-label="Filter by payment status" className="-mx-1 mb-4 flex gap-2 overflow-x-auto px-1 pb-1">

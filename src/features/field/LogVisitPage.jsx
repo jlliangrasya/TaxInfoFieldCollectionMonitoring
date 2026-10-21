@@ -38,7 +38,7 @@ export function LogVisitPage() {
     [propertyId],
   )
 
-  const crumbs = [{ label: 'Dashboard', to: '/' }, { label: 'My Assignments', to: '/field' }, { label: 'Record a visit' }]
+  const crumbs = [{ label: 'Home', to: '/' }, { label: 'My Assignments', to: '/field' }, { label: 'Record a visit' }]
   if (loading && !data) return <LoadingState rows={6} />
   if (error) {
     return (

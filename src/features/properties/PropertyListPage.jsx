@@ -47,7 +47,7 @@ export function PropertyListPage() {
             ? 'Search real property records by taxpayer name, ARP No., PIN, Tax Declaration No. or barangay.'
             : 'Properties in your assigned area. Search by taxpayer name, ARP No., PIN or Tax Declaration No.'
         }
-        breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'Properties' }]}
+        breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Properties' }]}
       />
       <FilterBar
         showClear={Boolean(query || barangayId || status || classification)}

@@ -30,7 +30,7 @@ export function AccessDenied() {
         Your account does not have permission to open this page. If you need access, please contact the System Administrator.
       </p>
       <Button asChild>
-        <Link to="/">Go to Dashboard</Link>
+        <Link to="/">Go to Home page</Link>
       </Button>
     </div>
   )
@@ -43,7 +43,7 @@ export function NotFound() {
       <h1 className="text-2xl font-semibold">Page not found</h1>
       <p className="max-w-md text-muted-foreground">The page you are looking for does not exist or may have been moved.</p>
       <Button asChild>
-        <Link to="/">Go to Dashboard</Link>
+        <Link to="/">Go to Home page</Link>
       </Button>
     </div>
   )

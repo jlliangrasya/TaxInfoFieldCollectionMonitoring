@@ -33,7 +33,7 @@ export function MyAssignmentsPage() {
       <PageHeader
         title="My Assignments"
         description="Properties in your assigned area that still have a balance. Follow-ups that are due are shown first."
-        breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'My Assignments' }]}
+        breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'My Assignments' }]}
       />
 
       {areas.data && (

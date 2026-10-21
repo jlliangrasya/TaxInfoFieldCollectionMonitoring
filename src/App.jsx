@@ -12,6 +12,9 @@ export function App({ storeStatus }) {
     if (storeStatus?.recovered) {
       toast.warning('The saved demo data could not be read, so fresh sample data was loaded.')
     }
+    if (storeStatus && !storeStatus.persistent) {
+      toast.warning('Your browser is blocking storage, so changes will be lost when the page is refreshed.', { duration: 10000 })
+    }
   }, [storeStatus])
 
   return (

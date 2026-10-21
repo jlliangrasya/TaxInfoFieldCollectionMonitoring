@@ -85,7 +85,7 @@ export function ReportsPage() {
               ? 'Choose a report, set the filters, then view, print or download it as PDF or Excel.'
               : 'Reports of your own field activity. Choose a report and period, then view, print or download it.'
           }
-          breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'Reports' }]}
+          breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Reports' }]}
         />
 
         <h2 className="mb-2 font-semibold">Step 1 — Choose a report</h2>

@@ -9,7 +9,6 @@ import { initials } from '@/lib/format'
 import { APP_NAME, LGU_NAME, OFFICE_NAME } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { navGroupsFor, bottomNavFor } from './navigation'
-import { DemoBanner } from './DemoBanner'
 import { IdleLogout } from './IdleLogout'
 
 function Brand({ light = false }) {
@@ -44,7 +43,7 @@ function NavList({ user, onNavigate }) {
                   className={({ isActive }) =>
                     cn(
                       'flex min-h-11 items-center gap-3 rounded-md px-3 py-2 text-[15px] transition-colors',
-                      isActive ? 'bg-sidebar-accent font-semibold text-white' : 'text-sidebar-foreground/85 hover:bg-sidebar-accent/60 hover:text-white',
+                      isActive ? 'bg-sidebar-accent font-semibold text-white shadow-[inset_3px_0_0_var(--color-sidebar-indicator)]' : 'text-sidebar-foreground/85 hover:bg-sidebar-accent/60 hover:text-white',
                     )
                   }
                 >
@@ -105,7 +104,7 @@ export function AppShell() {
         <div className="px-5 py-5">
           <Brand light />
         </div>
-        <div className="flex-1 overflow-y-auto px-3 pb-4">
+        <div className="scrollbar-none flex-1 overflow-y-auto px-3 pb-4">
           <NavList user={user} />
         </div>
         <div className="px-4 pb-4">
@@ -114,10 +113,9 @@ export function AppShell() {
       </aside>
 
       <div className="flex min-h-dvh flex-col lg:pl-72">
-        <DemoBanner />
 
         {/* Phone/tablet top bar */}
-        <header className="no-print sticky top-0 z-20 flex items-center justify-between gap-2 border-b bg-card/95 px-4 py-2 backdrop-blur lg:hidden">
+        <header className="no-print sticky top-0 z-20 flex items-center justify-between gap-2 border-t-4 border-b border-t-maroon bg-card/95 px-4 py-2 backdrop-blur lg:hidden">
           <Brand />
           <Button variant="outline" size="icon" onClick={() => setMenuOpen(true)} aria-label="Open menu">
             <Menu />
@@ -143,14 +141,22 @@ export function AppShell() {
                     )
                   }
                 >
-                  <item.icon className="size-6" aria-hidden />
-                  {item.short}
+                  {({ isActive }) => (
+                    <>
+                      <span className={cn('flex h-8 w-14 items-center justify-center rounded-full transition-colors', isActive && 'bg-primary/10')}>
+                        <item.icon className="size-6" aria-hidden />
+                      </span>
+                      {item.short}
+                    </>
+                  )}
                 </NavLink>
               </li>
             ))}
             <li>
               <button type="button" onClick={() => setMenuOpen(true)} className="flex min-h-16 w-full flex-col items-center justify-center gap-1 text-xs text-muted-foreground">
-                <Menu className="size-6" aria-hidden />
+                <span className="flex h-8 w-14 items-center justify-center">
+                  <Menu className="size-6" aria-hidden />
+                </span>
                 Menu
               </button>
             </li>
@@ -166,7 +172,7 @@ export function AppShell() {
             <SheetDescription className="sr-only">All pages you can open</SheetDescription>
             <Brand light />
           </SheetHeader>
-          <div className="flex-1 overflow-y-auto px-3 pb-4">
+          <div className="scrollbar-none flex-1 overflow-y-auto px-3 pb-4">
             <NavList user={user} onNavigate={() => setMenuOpen(false)} />
           </div>
           <div className="px-4 pb-6">

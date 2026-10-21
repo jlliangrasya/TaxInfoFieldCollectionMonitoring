@@ -32,7 +32,7 @@ export function VerificationPage() {
       <PageHeader
         title="Field Record Review"
         description="Check each collection entered by Revenue Collectors against the Official Receipt. Verified records are added to the taxpayer's payments; rejected records are not counted."
-        breadcrumbs={[{ label: 'Dashboard', to: '/' }, { label: 'Field Record Review' }]}
+        breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Field Record Review' }]}
       />
 
       <Tabs value={tab} onValueChange={setTab} className="mb-4">
