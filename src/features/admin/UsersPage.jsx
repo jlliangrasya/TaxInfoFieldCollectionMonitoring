@@ -20,6 +20,11 @@ import { generateTempPassword } from '@/lib/crypto'
 import { ROLE_LABELS } from '@/lib/permissions'
 import { formatDateTime } from '@/lib/format'
 import { showError } from '@/lib/errors'
+import { DEMO_ACCOUNTS } from '@/data/seed'
+
+// The non-admin demo accounts still exist and can log in; they are only hidden
+// from this list for now. Empty this set to show them again.
+const HIDDEN_USERNAMES = new Set(DEMO_ACCOUNTS.filter((acc) => acc.role !== 'admin').map((acc) => acc.username))
 
 function UserStatus({ u }) {
   if (!u.active) return <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">Deactivated</span>
@@ -84,7 +89,7 @@ export function UsersPage() {
       ) : (
         <DataTable
           caption="User accounts"
-          rows={data}
+          rows={data.filter((u) => !HIDDEN_USERNAMES.has(u.username))}
           columns={[
             { key: 'fullName', header: 'Name', cell: (u) => <span className="font-medium">{u.fullName}{u.id === me.id && <span className="ml-1 text-xs text-muted-foreground">(you)</span>}</span> },
             { key: 'username', header: 'Username', cell: (u) => <code className="font-mono text-xs">{u.username}</code> },

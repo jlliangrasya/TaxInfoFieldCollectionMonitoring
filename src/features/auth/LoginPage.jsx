@@ -10,6 +10,10 @@ import { DEMO_ACCOUNTS, DEMO_PASSWORD } from '@/data/seed'
 import { ROLE_LABELS } from '@/lib/permissions'
 import { APP_FULL_NAME, LGU_NAME, OFFICE_NAME } from '@/lib/constants'
 
+// Only the admin account is offered on the login screen for now.
+// Remove this filter to list every demo account again.
+const VISIBLE_DEMO_ACCOUNTS = DEMO_ACCOUNTS.filter((acc) => acc.role === 'admin')
+
 export function LoginPage() {
   const { user, login } = useAuth()
   const navigate = useNavigate()
@@ -41,7 +45,7 @@ export function LoginPage() {
     }
   }
 
-  const selectedDemo = DEMO_ACCOUNTS.find((acc) => acc.username === username)
+  const selectedDemo = VISIBLE_DEMO_ACCOUNTS.find((acc) => acc.username === username)
 
   function fillDemoAccount(acc) {
     setUsername(acc.username)
@@ -135,16 +139,16 @@ export function LoginPage() {
             </form>
 
             <div className="rounded-xl border border-t-4 border-t-maroon bg-card p-4">
-              <p className="font-semibold text-maroon">Demo accounts</p>
+              <p className="font-semibold text-maroon">Demo account</p>
               <p className="mb-3 text-sm text-muted-foreground">
-                Pick an account to fill in the login form. Password for all: <code className="rounded bg-muted px-1.5 py-0.5 font-mono">{DEMO_PASSWORD}</code>
+                Pick the account to fill in the login form. Password: <code className="rounded bg-muted px-1.5 py-0.5 font-mono">{DEMO_PASSWORD}</code>
               </p>
-              <Select value={selectedDemo?.username ?? ''} onValueChange={(value) => fillDemoAccount(DEMO_ACCOUNTS.find((acc) => acc.username === value))}>
+              <Select value={selectedDemo?.username ?? ''} onValueChange={(value) => fillDemoAccount(VISIBLE_DEMO_ACCOUNTS.find((acc) => acc.username === value))}>
                 <SelectTrigger className="w-full border-primary/60 focus-visible:border-maroon focus-visible:ring-maroon/30 [&_svg]:text-primary" aria-label="Demo account">
                   <SelectValue placeholder="Choose a demo account" />
                 </SelectTrigger>
                 <SelectContent position="popper" className="border-primary/40">
-                  {DEMO_ACCOUNTS.map((acc) => (
+                  {VISIBLE_DEMO_ACCOUNTS.map((acc) => (
                     <SelectItem
                       key={acc.username}
                       value={acc.username}
