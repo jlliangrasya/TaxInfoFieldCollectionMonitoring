@@ -52,6 +52,7 @@ export function computeAccounts(db, propertyIds = null) {
         pendingFieldAmount,
         visitCount: visits.length,
         lastVisitDate: last?.visitDate ?? null,
+        lastOutcome: last?.outcome ?? null,
         followUpStatus: needsFollowUp && last ? FOLLOW_UP_LABELS[last.outcome] ?? 'For follow-up' : needsFollowUp ? 'Not yet visited' : '—',
         followUpDate: needsFollowUp ? last?.followUpDate ?? null : null,
         assignedCollectorId: collectorId,

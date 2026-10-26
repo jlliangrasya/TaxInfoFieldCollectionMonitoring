@@ -1,7 +1,7 @@
-import { useState } from 'react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { DataTable } from '@/components/common/DataTable'
-import { FilterBar, DateFilter, SelectFilter } from '@/components/common/Filters'
+import { FilterBar, DateFilter, SelectFilter, SearchBox, DatePresets } from '@/components/common/Filters'
+import { useUrlState, useUrlSearchText } from '@/hooks/useUrlState'
 import { LoadingState, ErrorState } from '@/components/common/States'
 import { FieldStatusBadge } from '@/components/common/StatusBadge'
 import { GpsLink } from '@/components/common/GpsLink'
@@ -13,11 +13,16 @@ import { peso, formatDate, isoDate } from '@/lib/format'
 import { VISIT_OUTCOMES } from '@/lib/constants'
 
 export function VisitsPage() {
-  const [filters, setFilters] = useState({ from: '', to: '', collectorId: '', barangayId: '', outcome: '' })
-  const set = (key) => (value) => setFilters((f) => ({ ...f, [key]: value }))
+  const [filters, setFilter, clear] = useUrlState({ query: '', from: '', to: '', collectorId: '', barangayId: '', outcome: '' })
+  const set = (key) => (value) => setFilter(key, value)
+  const [text, setText] = useUrlSearchText(filters.query, (v) => setFilter('query', v))
   const collectors = useQuery(() => listCollectors({ includeInactive: true }), [])
   const barangays = useQuery(() => listBarangays(), [])
-  const { data, loading, error, reload } = useQuery(() => listVisits(filters), [filters])
+  const { query, from, to, collectorId, barangayId, outcome } = filters
+  const { data, loading, error, reload } = useQuery(
+    () => listVisits({ query, from, to, collectorId, barangayId, outcome }),
+    [query, from, to, collectorId, barangayId, outcome],
+  )
 
   return (
     <>
@@ -26,10 +31,14 @@ export function VisitsPage() {
         description="Activity of all Revenue Collectors: visits, results, collections and follow-ups."
         breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Field Visits' }]}
       />
-      <FilterBar
-        showClear={Object.values(filters).some(Boolean)}
-        onClear={() => setFilters({ from: '', to: '', collectorId: '', barangayId: '', outcome: '' })}
-      >
+      <DatePresets
+        className="mb-3"
+        from={from}
+        to={to}
+        onPick={(f, t) => setFilter({ from: f, to: t })}
+      />
+      <FilterBar showClear={Object.values(filters).some(Boolean)} onClear={clear}>
+        <SearchBox value={text} onChange={setText} placeholder="Taxpayer, ARP No. or remarks" />
         <DateFilter label="From" value={filters.from} onChange={set('from')} max={isoDate()} />
         <DateFilter label="To" value={filters.to} onChange={set('to')} max={isoDate()} />
         <SelectFilter label="Collector" value={filters.collectorId} onChange={set('collectorId')} options={(collectors.data ?? []).map((c) => ({ value: c.id, label: c.fullName }))} />

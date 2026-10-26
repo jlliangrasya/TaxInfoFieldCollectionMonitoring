@@ -70,7 +70,6 @@ function WelcomeHero({ user }) {
       {/* Decorative shapes */}
       <span className="pointer-events-none absolute -top-16 -right-10 size-56 rounded-full bg-white/5" aria-hidden />
       <span className="pointer-events-none absolute -right-4 -bottom-24 size-48 rounded-full bg-maroon/40" aria-hidden />
-      <span className="absolute inset-x-0 bottom-0 h-1.5 bg-maroon" aria-hidden />
 
       <div className="relative">
         <p className="text-sm font-medium text-sidebar-foreground/75">{format(new Date(), 'EEEE, d MMMM yyyy')}</p>
@@ -321,11 +320,16 @@ function CollectorDashboard({ data }) {
           ) : (
             <ul className="divide-y">
               {data.recentVisits.map((v) => (
-                <li key={v.id} className="py-3">
-                  <p className="font-medium">{v.taxpayerName}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {formatDate(v.visitDate)} · {v.arpNo} · {v.outcomeLabel}
-                  </p>
+                <li key={v.id}>
+                  <Link to={`/properties/${v.propertyId}`} className="flex items-center gap-3 py-3 hover:bg-accent/50">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium">{v.taxpayerName}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {formatDate(v.visitDate)} · {v.arpNo} · {v.outcomeLabel}
+                      </p>
+                    </div>
+                    <ChevronRight className="size-4 text-muted-foreground" aria-hidden />
+                  </Link>
                 </li>
               ))}
             </ul>

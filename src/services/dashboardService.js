@@ -118,3 +118,24 @@ export async function getDashboard() {
       : [],
   }
 }
+
+/**
+ * Small "to do" counts shown as badges in the menu, keyed by page path.
+ * Only counts the signed-in user may act on are included.
+ */
+export async function getNavCounts() {
+  await delay(0)
+  const user = requireUser()
+  const db = getDb()
+  const counts = {}
+  if (can(user, PERMISSIONS.FIELD_VERIFY)) {
+    counts['/verifications'] = db.fieldCollections.filter((f) => f.status === 'pending').length
+  }
+  if (can(user, PERMISSIONS.FIELD_RECORD)) {
+    const today = isoDate()
+    counts['/field'] = computeAccounts(db, accessiblePropertyIds(user, db)).filter(
+      (a) => a.balance > 0 && a.followUpDate && a.followUpDate <= today,
+    ).length
+  }
+  return counts
+}

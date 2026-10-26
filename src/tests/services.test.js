@@ -4,11 +4,11 @@ import { DEMO_PASSWORD } from '@/data/seed'
 import { login, logout, changePassword } from '@/services/authService'
 import { listProperties, getProperty } from '@/services/propertyService'
 import { listTaxpayers } from '@/services/taxpayerService'
-import { recordPayment, verifyFieldCollection, rejectFieldCollection, listFieldCollections } from '@/services/collectionService'
-import { logVisit, listMyAssignments } from '@/services/fieldVisitService'
+import { recordPayment, verifyFieldCollection, rejectFieldCollection, listFieldCollections, listAccounts } from '@/services/collectionService'
+import { logVisit, listMyAssignments, listVisits } from '@/services/fieldVisitService'
 import { createUser, setUserActive } from '@/services/userService'
 import { generateReport } from '@/services/reportService'
-import { getDashboard } from '@/services/dashboardService'
+import { getDashboard, getNavCounts } from '@/services/dashboardService'
 import { isoDate } from '@/lib/format'
 
 const as = (username) => login(username, DEMO_PASSWORD)
@@ -180,5 +180,48 @@ describe('store safety', () => {
     const status = await initStore()
     expect(status.recovered).toBe(true)
     expect(getDb().users).toHaveLength(7)
+  })
+})
+
+describe('monitoring filters and menu counts', () => {
+  it('filters accounts by follow-up and assigned collector', async () => {
+    await as('treasurer')
+    const today = isoDate()
+    const due = await listAccounts({ followUp: 'due' })
+    expect(due.length).toBeGreaterThan(0)
+    expect(due.every((a) => a.balance > 0 && a.followUpDate <= today)).toBe(true)
+
+    const notVisited = await listAccounts({ followUp: 'not_visited' })
+    expect(notVisited.every((a) => a.balance > 0 && !a.lastVisitDate)).toBe(true)
+
+    const collector = getDb().users.find((u) => u.username === 'collector1')
+    const theirs = await listAccounts({ collectorId: collector.id })
+    expect(theirs.length).toBeGreaterThan(0)
+    expect(theirs.every((a) => a.assignedCollectorId === collector.id)).toBe(true)
+  })
+
+  it('searches visits by taxpayer or ARP No.', async () => {
+    await as('treasurer')
+    const [first] = await listVisits()
+    const byArp = await listVisits({ query: first.arpNo })
+    expect(byArp.length).toBeGreaterThan(0)
+    expect(byArp.every((v) => v.arpNo === first.arpNo || v.remarks.includes(first.arpNo))).toBe(true)
+  })
+
+  it('shows menu counts only for work the user can do', async () => {
+    await as('treasurer')
+    const office = await getNavCounts()
+    expect(office['/verifications']).toBe(getDb().fieldCollections.filter((f) => f.status === 'pending').length)
+    expect(office['/field']).toBeUndefined()
+
+    await logout()
+    await as('collector1')
+    const field = await getNavCounts()
+    expect(field['/verifications']).toBeUndefined()
+    expect(field['/field']).toBe((await getDashboard()).followUpsDue)
+
+    await logout()
+    await as('admin')
+    expect(await getNavCounts()).toEqual({})
   })
 })

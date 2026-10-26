@@ -1,4 +1,5 @@
-import { AlertCircle, Inbox, RefreshCw } from 'lucide-react'
+import { Link } from 'react-router'
+import { AlertCircle, Home, Inbox, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -14,13 +15,21 @@ export function LoadingState({ rows = 4, label = 'Loading…' }) {
 }
 
 export function ErrorState({ error, onRetry }) {
+  // Trying again cannot fix "not allowed" or "not found", so offer a way out instead.
+  const retryable = onRetry && !['PermissionError', 'ValidationError'].includes(error?.name)
   return (
     <div role="alert" className="flex flex-col items-center gap-3 rounded-lg border border-danger/30 bg-danger-soft p-8 text-center">
       <AlertCircle className="size-8 text-danger" aria-hidden />
       <p className="font-medium">{error?.message || 'Something went wrong while loading this page.'}</p>
-      {onRetry && (
+      {retryable ? (
         <Button variant="outline" onClick={() => onRetry()}>
           <RefreshCw /> Try again
+        </Button>
+      ) : (
+        <Button asChild variant="outline">
+          <Link to="/">
+            <Home /> Go to Home page
+          </Link>
         </Button>
       )}
     </div>

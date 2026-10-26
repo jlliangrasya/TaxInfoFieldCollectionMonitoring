@@ -206,9 +206,9 @@ export function PropertyDetailPage() {
             {p.visits.length === 0 ? (
               <EmptyState title="No visits yet">No field visits have been recorded for this property.</EmptyState>
             ) : (
-              <ol className="space-y-4">
+              <ol className="space-y-3">
                 {p.visits.map((v) => (
-                  <li key={v.id} className="border-l-2 border-primary/30 pl-4">
+                  <li key={v.id} className="rounded-lg bg-muted/60 p-3">
                     <p className="font-medium">
                       {formatDate(v.visitDate)} — {outcomeLabel(v.outcome)}
                     </p>

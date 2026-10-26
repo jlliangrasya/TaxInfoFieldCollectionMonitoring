@@ -3,7 +3,8 @@ import { Link } from 'react-router'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageHeader } from '@/components/common/PageHeader'
 import { DataTable } from '@/components/common/DataTable'
-import { FilterBar, DateFilter } from '@/components/common/Filters'
+import { FilterBar, DateFilter, SearchBox, DatePresets } from '@/components/common/Filters'
+import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { LoadingState, ErrorState, EmptyState } from '@/components/common/States'
 import { FieldStatusBadge, DuplicateBadge, NotOfficialReceiptNote } from '@/components/common/StatusBadge'
 import { useQuery } from '@/hooks/useQuery'
@@ -32,13 +33,17 @@ export function MyVisitsPage() {
 }
 
 function VisitHistory() {
+  const [query, setQuery] = useState('')
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
-  const { data, loading, error, reload } = useQuery(() => listVisits({ from, to }), [from, to])
+  const q = useDebouncedValue(query)
+  const { data, loading, error, reload } = useQuery(() => listVisits({ query: q, from, to }), [q, from, to])
 
   return (
     <>
-      <FilterBar showClear={Boolean(from || to)} onClear={() => { setFrom(''); setTo('') }}>
+      <DatePresets className="mb-3" from={from} to={to} onPick={(f, t) => { setFrom(f); setTo(t) }} />
+      <FilterBar showClear={Boolean(query || from || to)} onClear={() => { setQuery(''); setFrom(''); setTo('') }}>
+        <SearchBox value={query} onChange={setQuery} placeholder="Taxpayer or ARP No." className="sm:col-span-2" />
         <DateFilter label="From" value={from} onChange={setFrom} max={isoDate()} />
         <DateFilter label="To" value={to} onChange={setTo} max={isoDate()} />
       </FilterBar>

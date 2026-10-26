@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import { initStore } from '@/data/store'
 import { Splash } from '@/components/layout/Splash'
+import { applyLargeText } from '@/lib/textSize'
+
+applyLargeText()
 
 const root = createRoot(document.getElementById('root'))
 

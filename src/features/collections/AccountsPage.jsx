@@ -1,30 +1,32 @@
-import { useState } from 'react'
-import { useSearchParams } from 'react-router'
 import { PageHeader } from '@/components/common/PageHeader'
 import { DataTable } from '@/components/common/DataTable'
 import { FilterBar, SearchBox, SelectFilter } from '@/components/common/Filters'
-import { useDebouncedValue } from '@/hooks/useDebouncedValue'
+import { useUrlState, useUrlSearchText } from '@/hooks/useUrlState'
 import { LoadingState, ErrorState } from '@/components/common/States'
 import { AccountStatusBadge } from '@/components/common/StatusBadge'
 import { useQuery } from '@/hooks/useQuery'
 import { listAccounts } from '@/services/collectionService'
 import { listBarangays } from '@/services/propertyService'
+import { listCollectors } from '@/services/assignmentService'
 import { peso, formatDate } from '@/lib/format'
 import { STATUS_LABELS, round2 } from '@/lib/rpt'
+import { FOLLOW_UP_FILTERS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 const CHIPS = [{ value: '', label: 'All accounts' }, ...Object.entries(STATUS_LABELS).map(([value, label]) => ({ value, label }))]
 
 export function AccountsPage() {
-  const [params, setParams] = useSearchParams()
-  const status = params.get('status') ?? ''
-  const [query, setQuery] = useState('')
-  const [barangayId, setBarangayId] = useState('')
-  const q = useDebouncedValue(query)
+  const [{ status, query, barangayId, followUp, collectorId }, set] = useUrlState({ status: '', query: '', barangayId: '', followUp: '', collectorId: '' })
+  const [text, setText] = useUrlSearchText(query, (v) => set('query', v))
   const barangays = useQuery(() => listBarangays(), [])
-  const { data, loading, error, reload } = useQuery(() => listAccounts({ query: q, status, barangayId }), [q, status, barangayId])
+  const collectors = useQuery(() => listCollectors(), [])
+  const { data, loading, error, reload } = useQuery(
+    () => listAccounts({ query, status, barangayId, followUp, collectorId }),
+    [query, status, barangayId, followUp, collectorId],
+  )
 
-  const setStatus = (value) => setParams(value ? { status: value } : {}, { replace: true })
+  const setStatus = (value) => set('status', value)
+  const clearFilters = () => set({ query: '', barangayId: '', followUp: '', collectorId: '' })
   const totals = data && {
     due: round2(data.reduce((s, r) => s + r.totalDue, 0)),
     paid: round2(data.reduce((s, r) => s + r.totalPaid, 0)),
@@ -77,9 +79,16 @@ export function AccountsPage() {
         ))}
       </div>
 
-      <FilterBar showClear={Boolean(query || barangayId)} onClear={() => { setQuery(''); setBarangayId('') }}>
-        <SearchBox value={query} onChange={setQuery} placeholder="Name, ARP No., PIN or TD No." className="sm:col-span-2" />
-        <SelectFilter label="Barangay" value={barangayId} onChange={setBarangayId} options={(barangays.data ?? []).map((b) => ({ value: b.id, label: b.name }))} />
+      <FilterBar showClear={Boolean(query || barangayId || followUp || collectorId)} onClear={clearFilters}>
+        <SearchBox value={text} onChange={setText} placeholder="Name, ARP No., PIN or TD No." />
+        <SelectFilter label="Barangay" value={barangayId} onChange={(v) => set('barangayId', v)} options={(barangays.data ?? []).map((b) => ({ value: b.id, label: b.name }))} />
+        <SelectFilter label="Follow-up" value={followUp} onChange={(v) => set('followUp', v)} options={FOLLOW_UP_FILTERS} />
+        <SelectFilter
+          label="Assigned collector"
+          value={collectorId}
+          onChange={(v) => set('collectorId', v)}
+          options={[...(collectors.data ?? []).map((c) => ({ value: c.id, label: c.fullName })), { value: 'unassigned', label: 'No collector assigned' }]}
+        />
       </FilterBar>
 
       {totals && (

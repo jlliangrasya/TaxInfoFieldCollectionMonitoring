@@ -10,9 +10,9 @@ import { DEMO_ACCOUNTS, DEMO_PASSWORD } from '@/data/seed'
 import { ROLE_LABELS } from '@/lib/permissions'
 import { APP_FULL_NAME, LGU_NAME, OFFICE_NAME } from '@/lib/constants'
 
-// Only the admin account is offered on the login screen for now.
-// Remove this filter to list every demo account again.
-const VISIBLE_DEMO_ACCOUNTS = DEMO_ACCOUNTS.filter((acc) => acc.role === 'admin')
+// Production builds (the Netlify demo) offer only the admin account on the login screen.
+// Development (`npm run dev`) lists every demo account.
+const VISIBLE_DEMO_ACCOUNTS = import.meta.env.PROD ? DEMO_ACCOUNTS.filter((acc) => acc.role === 'admin') : DEMO_ACCOUNTS
 
 export function LoginPage() {
   const { user, login } = useAuth()
@@ -56,7 +56,7 @@ export function LoginPage() {
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
       {/* Welcome panel */}
-      <div className="hidden flex-col justify-between border-r-4 border-r-maroon bg-sidebar p-10 text-sidebar-foreground lg:flex">
+      <div className="hidden flex-col justify-between bg-sidebar p-10 text-sidebar-foreground lg:flex">
         <div className="flex items-center gap-3">
           <span className="flex size-12 items-center justify-center rounded-xl bg-white/10">
             <Landmark className="size-6" aria-hidden />
@@ -138,10 +138,11 @@ export function LoginPage() {
               </p>
             </form>
 
-            <div className="rounded-xl border border-t-4 border-t-maroon bg-card p-4">
-              <p className="font-semibold text-maroon">Demo account</p>
+            <div className="rounded-xl bg-maroon-soft p-4">
+              <p className="font-semibold text-maroon">{VISIBLE_DEMO_ACCOUNTS.length > 1 ? 'Demo accounts' : 'Demo account'}</p>
               <p className="mb-3 text-sm text-muted-foreground">
-                Pick the account to fill in the login form. Password: <code className="rounded bg-muted px-1.5 py-0.5 font-mono">{DEMO_PASSWORD}</code>
+                {VISIBLE_DEMO_ACCOUNTS.length > 1 ? 'Pick an account to fill in the login form. Password for all: ' : 'Pick the account to fill in the login form. Password: '}
+                <code className="rounded bg-muted px-1.5 py-0.5 font-mono">{DEMO_PASSWORD}</code>
               </p>
               <Select value={selectedDemo?.username ?? ''} onValueChange={(value) => fillDemoAccount(VISIBLE_DEMO_ACCOUNTS.find((acc) => acc.username === value))}>
                 <SelectTrigger className="w-full border-primary/60 focus-visible:border-maroon focus-visible:ring-maroon/30 [&_svg]:text-primary" aria-label="Demo account">

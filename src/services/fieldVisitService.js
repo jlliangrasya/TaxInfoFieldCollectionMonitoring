@@ -172,7 +172,7 @@ export async function logVisit(input) {
 
 /**
  * Field visit history.
- * @param filters { from, to, collectorId, barangayId, propertyId, outcome }
+ * @param filters { query, from, to, collectorId, barangayId, propertyId, outcome }
  */
 export async function listVisits(filters = {}) {
   await delay()
@@ -183,6 +183,7 @@ export async function listVisits(filters = {}) {
   const showGps = can(user, PERMISSIONS.GPS_VIEW)
   const properties = new Map(db.properties.map((p) => [p.id, p]))
   const taxpayers = new Map(db.taxpayers.map((t) => [t.id, t]))
+  const q = String(filters.query ?? '').trim().toLowerCase()
 
   return db.visits
     .filter((v) => viewAll || v.collectorId === user.id)
@@ -207,5 +208,6 @@ export async function listVisits(filters = {}) {
         collectionStatus: fc?.status ?? null,
       }
     })
+    .filter((v) => !q || [v.taxpayerName, v.arpNo, v.remarks].some((s) => s?.toLowerCase().includes(q)))
     .sort((a, b) => b.visitDate.localeCompare(a.visitDate) || b.createdAt.localeCompare(a.createdAt))
 }

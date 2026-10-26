@@ -1,8 +1,7 @@
-import { useState } from 'react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { DataTable } from '@/components/common/DataTable'
 import { FilterBar, SearchBox, SelectFilter } from '@/components/common/Filters'
-import { useDebouncedValue } from '@/hooks/useDebouncedValue'
+import { useUrlState, useUrlSearchText } from '@/hooks/useUrlState'
 import { LoadingState, ErrorState } from '@/components/common/States'
 import { AccountStatusBadge } from '@/components/common/StatusBadge'
 import { useQuery } from '@/hooks/useQuery'
@@ -11,11 +10,10 @@ import { listBarangays } from '@/services/propertyService'
 import { peso } from '@/lib/format'
 
 export function TaxpayerListPage() {
-  const [query, setQuery] = useState('')
-  const [barangayId, setBarangayId] = useState('')
-  const q = useDebouncedValue(query)
+  const [{ query, barangayId }, set, clear] = useUrlState({ query: '', barangayId: '' })
+  const [text, setText] = useUrlSearchText(query, (v) => set('query', v))
   const barangays = useQuery(() => listBarangays(), [])
-  const { data, loading, error, reload } = useQuery(() => listTaxpayers({ query: q, barangayId }), [q, barangayId])
+  const { data, loading, error, reload } = useQuery(() => listTaxpayers({ query, barangayId }), [query, barangayId])
 
   const columns = [
     { key: 'name', header: 'Taxpayer' },
@@ -34,9 +32,9 @@ export function TaxpayerListPage() {
         description="Find a taxpayer by name, Taxpayer ID, or by any of their property numbers (ARP, PIN, TD)."
         breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Taxpayers' }]}
       />
-      <FilterBar showClear={Boolean(query || barangayId)} onClear={() => { setQuery(''); setBarangayId('') }}>
-        <SearchBox value={query} onChange={setQuery} placeholder="Name, Taxpayer ID or ARP No." className="sm:col-span-2" />
-        <SelectFilter label="Barangay" value={barangayId} onChange={setBarangayId} options={(barangays.data ?? []).map((b) => ({ value: b.id, label: b.name }))} />
+      <FilterBar showClear={Boolean(query || barangayId)} onClear={clear}>
+        <SearchBox value={text} onChange={setText} placeholder="Name, Taxpayer ID or ARP No." className="sm:col-span-2" />
+        <SelectFilter label="Barangay" value={barangayId} onChange={(v) => set('barangayId', v)} options={(barangays.data ?? []).map((b) => ({ value: b.id, label: b.name }))} />
       </FilterBar>
       {loading && !data ? (
         <LoadingState />

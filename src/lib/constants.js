@@ -37,6 +37,17 @@ export const FOLLOW_UP_LABELS = {
   other: 'For follow-up',
 }
 
+// Follow-up filter on Collection Monitoring. Applies only to accounts with a balance.
+export const FOLLOW_UP_FILTERS = [
+  { value: 'due', label: 'Follow-up due (today or earlier)' },
+  { value: 'scheduled', label: 'Follow-up scheduled (future)' },
+  { value: 'not_visited', label: 'Not yet visited' },
+  { value: 'promised', label: 'Promised to pay' },
+  { value: 'not_home', label: 'Taxpayer not at home' },
+  { value: 'refused', label: 'Refused to pay' },
+  { value: 'not_found', label: 'Taxpayer not found' },
+]
+
 export const FIELD_STATUS_LABELS = {
   pending: 'Pending verification',
   verified: 'Verified by Treasury',

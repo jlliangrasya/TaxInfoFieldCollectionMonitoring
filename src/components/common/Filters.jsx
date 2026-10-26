@@ -2,6 +2,9 @@ import { Search, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { subDays } from 'date-fns'
+import { isoDate } from '@/lib/format'
+import { cn } from '@/lib/utils'
 import { NativeSelect } from './FormField'
 
 export function FilterBar({ children, onClear, showClear }) {
@@ -60,6 +63,39 @@ export function DateFilter({ label, value, onChange, max }) {
     <div>
       <Label className="mb-1.5 block text-sm font-medium">{label}</Label>
       <Input type="date" value={value} max={max} onChange={(e) => onChange(e.target.value)} aria-label={label} />
+    </div>
+  )
+}
+
+const DATE_PRESETS = [
+  { label: 'Today', range: () => [isoDate(), isoDate()] },
+  { label: 'Last 7 days', range: () => [isoDate(subDays(new Date(), 6)), isoDate()] },
+  { label: 'This month', range: () => [`${isoDate().slice(0, 7)}-01`, isoDate()] },
+  { label: 'This year', range: () => [`${isoDate().slice(0, 4)}-01-01`, isoDate()] },
+]
+
+/** One-tap date ranges, so nobody has to pick two dates by hand. */
+export function DatePresets({ from, to, onPick, className }) {
+  return (
+    <div role="group" aria-label="Quick date range" className={cn('flex flex-wrap gap-2', className)}>
+      {DATE_PRESETS.map((p) => {
+        const [f, t] = p.range()
+        const active = from === f && to === t
+        return (
+          <button
+            key={p.label}
+            type="button"
+            aria-pressed={active}
+            onClick={() => onPick(f, t)}
+            className={cn(
+              'min-h-9 rounded-full border px-3 text-sm font-medium transition-colors',
+              active ? 'border-primary bg-primary text-primary-foreground' : 'bg-card hover:bg-accent',
+            )}
+          >
+            {p.label}
+          </button>
+        )
+      })}
     </div>
   )
 }

@@ -130,6 +130,26 @@ export function HelpPage() {
               q="How do I change my password?"
               steps={['Open the menu and tap Password (next to Log out).', 'Enter your current password, then your new password twice.', 'Use at least 8 characters with letters and numbers.']}
             />
+            <Guide
+              q="How do I quickly find a property, taxpayer or page?"
+              steps={[
+                'Tap the magnifying glass at the top of the screen (on a computer, click Find… in the menu, or press Ctrl + K).',
+                'Type part of a name, an ARP No., PIN or TD No. — or the name of a page such as “Reports”.',
+                'Tap a result, or press Enter to open the first one.',
+              ]}
+            />
+            <Guide
+              q="The text is too small. Can I make it bigger?"
+              steps={['Open the menu.', 'Tap Larger text (below Password and Log out).', 'Tap Normal text size to change it back. This setting is saved on this device only.']}
+            />
+            <Guide
+              q="What do the red numbers in the menu mean?"
+              steps={[
+                'They show work waiting for you.',
+                'On My Assignments: follow-up visits that are due today or earlier.',
+                'On Field Record Review: collectors’ field records waiting for verification.',
+              ]}
+            />
           </div>
         </Section>
 

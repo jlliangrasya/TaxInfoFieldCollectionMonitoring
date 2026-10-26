@@ -1,8 +1,7 @@
-import { useState } from 'react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { DataTable } from '@/components/common/DataTable'
 import { FilterBar, SearchBox, SelectFilter } from '@/components/common/Filters'
-import { useDebouncedValue } from '@/hooks/useDebouncedValue'
+import { useUrlState, useUrlSearchText } from '@/hooks/useUrlState'
 import { LoadingState, ErrorState } from '@/components/common/States'
 import { AccountStatusBadge } from '@/components/common/StatusBadge'
 import { useQuery } from '@/hooks/useQuery'
@@ -16,16 +15,13 @@ const CLASSIFICATIONS = ['Residential', 'Agricultural', 'Commercial', 'Industria
 
 export function PropertyListPage() {
   const { can } = useAuth()
-  const [query, setQuery] = useState('')
-  const [barangayId, setBarangayId] = useState('')
-  const [status, setStatus] = useState('')
-  const [classification, setClassification] = useState('')
-  const q = useDebouncedValue(query)
+  const [{ query, barangayId, status, classification }, set, clear] = useUrlState({ query: '', barangayId: '', status: '', classification: '' })
+  const [text, setText] = useUrlSearchText(query, (v) => set('query', v))
 
   const barangays = useQuery(() => listBarangays(), [])
   const { data, loading, error, reload } = useQuery(
-    () => listProperties({ query: q, barangayId, status, classification }),
-    [q, barangayId, status, classification],
+    () => listProperties({ query, barangayId, status, classification }),
+    [query, barangayId, status, classification],
   )
 
   const columns = [
@@ -51,27 +47,22 @@ export function PropertyListPage() {
       />
       <FilterBar
         showClear={Boolean(query || barangayId || status || classification)}
-        onClear={() => {
-          setQuery('')
-          setBarangayId('')
-          setStatus('')
-          setClassification('')
-        }}
+        onClear={clear}
       >
-        <SearchBox value={query} onChange={setQuery} placeholder="Name, ARP No., PIN or TD No." className="sm:col-span-2 lg:col-span-1" />
+        <SearchBox value={text} onChange={setText} placeholder="Name, ARP No., PIN or TD No." className="sm:col-span-2 lg:col-span-1" />
         <SelectFilter
           label="Barangay"
           value={barangayId}
-          onChange={setBarangayId}
+          onChange={(v) => set('barangayId', v)}
           options={(barangays.data ?? []).map((b) => ({ value: b.id, label: b.name }))}
         />
         <SelectFilter
           label="Payment status"
           value={status}
-          onChange={setStatus}
+          onChange={(v) => set('status', v)}
           options={Object.entries(STATUS_LABELS).map(([value, label]) => ({ value, label }))}
         />
-        <SelectFilter label="Classification" value={classification} onChange={setClassification} options={CLASSIFICATIONS.map((c) => ({ value: c, label: c }))} />
+        <SelectFilter label="Classification" value={classification} onChange={(v) => set('classification', v)} options={CLASSIFICATIONS.map((c) => ({ value: c, label: c }))} />
       </FilterBar>
 
       {loading && !data ? (

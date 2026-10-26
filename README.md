@@ -21,7 +21,7 @@ The built `dist/` folder can be placed on any static web host. URLs use `#/…` 
 
 Password for all accounts: **`Demo@2026`** (also shown on the login screen).
 
-> For now, only the `admin` account appears on the login screen and in **User Accounts**. The other accounts below are hidden there, not deleted — they still log in normally by typing the username.
+> In production builds (`npm run build`, used for the Netlify demo), only the `admin` account appears on the login screen and in **User Accounts**. The other accounts are hidden there, not deleted — they still log in normally by typing the username. `npm run dev` shows all accounts.
 
 | Username | Name | Role |
 |---|---|---|

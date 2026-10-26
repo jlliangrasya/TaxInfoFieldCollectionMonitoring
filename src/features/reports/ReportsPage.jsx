@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import { FileDown, FileSpreadsheet, Loader2, Play, Printer, ChevronRight, TriangleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/common/PageHeader'
-import { FilterBar, DateFilter, SelectFilter } from '@/components/common/Filters'
+import { FilterBar, DateFilter, SelectFilter, DatePresets } from '@/components/common/Filters'
 import { EmptyState } from '@/components/common/States'
 import { useQuery } from '@/hooks/useQuery'
 import { useAuth } from '@/features/auth/AuthContext'
@@ -117,6 +117,9 @@ export function ReportsPage() {
         {def && (
           <>
             <h2 className="mb-2 font-semibold">Step 2 — Set filters</h2>
+            {def.filters.includes('dateRange') && (
+              <DatePresets className="mb-3" from={filters.from} to={filters.to} onPick={(from, to) => setFilters((f) => ({ ...f, from, to }))} />
+            )}
             <FilterBar>
               {def.filters.includes('dateRange') && (
                 <>

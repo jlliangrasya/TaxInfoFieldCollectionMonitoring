@@ -8,7 +8,7 @@
 import { getDb, commit, nextId } from '@/data/store'
 import { can, PERMISSIONS, PermissionError } from '@/lib/permissions'
 import { buildLedger, round2 } from '@/lib/rpt'
-import { peso } from '@/lib/format'
+import { peso, isoDate } from '@/lib/format'
 import { findOrNoConflict, findSimilarRecords, exceedsBalance } from '@/lib/duplicates'
 import { paymentInputSchema, verifyInputSchema, rejectInputSchema } from '@/lib/validation'
 import {
@@ -47,15 +47,30 @@ function describeMatch(db, m) {
   return `Field record ${m.refNo} by ${userName(m.collectorId, db)} — ${peso(m.amount)} on ${m.collectionDate} (${m.status})`
 }
 
-/** @param filters { query, status, barangayId, followUp } */
+function matchesFollowUp(r, followUp, today) {
+  if (!followUp) return true
+  if (r.balance <= 0) return false
+  if (followUp === 'due') return Boolean(r.followUpDate && r.followUpDate <= today)
+  if (followUp === 'scheduled') return Boolean(r.followUpDate && r.followUpDate > today)
+  if (followUp === 'not_visited') return !r.lastVisitDate
+  return r.lastOutcome === followUp
+}
+
+/**
+ * @param filters { query, status, barangayId, followUp, collectorId }
+ *   followUp: one of FOLLOW_UP_FILTERS values; collectorId: a user ID or 'unassigned'
+ */
 export async function listAccounts(filters = {}) {
   await delay()
   const user = requirePermission(PERMISSIONS.RECORDS_VIEW)
   const db = getDb()
+  const today = isoDate()
   return computeAccounts(db, accessiblePropertyIds(user, db))
     .filter((r) => matchesQuery(r, filters.query))
     .filter((r) => !filters.status || r.status === filters.status)
     .filter((r) => !filters.barangayId || r.barangayId === filters.barangayId)
+    .filter((r) => matchesFollowUp(r, filters.followUp, today))
+    .filter((r) => !filters.collectorId || (r.assignedCollectorId ?? 'unassigned') === filters.collectorId)
     .sort((a, b) => b.balance - a.balance)
 }
 
